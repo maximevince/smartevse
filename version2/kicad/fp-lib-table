@@ -1,3 +1,0 @@
-(fp_lib_table
-  (lib (name SmartEVSEv2.2)(type KiCad)(uri "$(KIPRJMOD)/SmartEVSEv2.2.pretty")(options "")(descr ""))
-)
