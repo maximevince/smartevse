@@ -27,7 +27,7 @@
 #include "GLCD.h"
 
 // LCD font 8x5
-const far unsigned char font[] = {
+const far uint8_t font[] = {
     0x00, 0x00, 0x00, 0x00, 0x00,
     0x3E, 0x5B, 0x4F, 0x5B, 0x3E,
     0x3E, 0x6B, 0x4F, 0x6B, 0x3E,
@@ -285,40 +285,40 @@ const far unsigned char font[] = {
     0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-const far char StrConfig[]  = "CONFIG";
-const far char StrMode[]    = "MODE";
-const far char StrFixed[]   = "Fixed";
-const far char StrSocket[]  = "Socket";
-const far char StrSmart[]   = "Smart";
-const far char StrNormal[]  = "Normal";
-const far char StrMains[]   = "MAINS";
-const far char StrMax[]     = "MAX";
-const far char StrMin[]     = "MIN";
-const far char StrLock[]    = "LOCK";
-const far char StrSolenoid[] = "Solenoid";
-const far char StrMotor[]   = "Motor";
-const far char StrDisabled[] = "Disabled";
-const far char StrCable[]   = "CABLE";
-const far char StrCal[]     = "CAL";
-const far char StrLoadBl[]  = "LOAD BAL";
-const far char StrMaster[]  = "Master";
-const far char StrSlave1[]  = "Slave 1";
-const far char StrSlave2[]  = "Slave 2";
-const far char StrSlave3[]  = "Slave 3";
-const far char StrAccess[]  = "ACCESS";
-const far char StrSwitch[]  = "Switch";
-const far char StrRcmon[]   = "RCMON";
-const far char StrEnabled[] = "Enabled";
-const far char StrExit[]    = "EXIT";
-const far char StrExitMenu[] = "MENU";
+const far uint8_t StrConfig[]  = "CONFIG";
+const far uint8_t StrMode[]    = "MODE";
+const far uint8_t StrFixed[]   = "Fixed";
+const far uint8_t StrSocket[]  = "Socket";
+const far uint8_t StrSmart[]   = "Smart";
+const far uint8_t StrNormal[]  = "Normal";
+const far uint8_t StrMains[]   = "MAINS";
+const far uint8_t StrMax[]     = "MAX";
+const far uint8_t StrMin[]     = "MIN";
+const far uint8_t StrLock[]    = "LOCK";
+const far uint8_t StrSolenoid[] = "Solenoid";
+const far uint8_t StrMotor[]   = "Motor";
+const far uint8_t StrDisabled[] = "Disabled";
+const far uint8_t StrCable[]   = "CABLE";
+const far uint8_t StrCal[]     = "CAL";
+const far uint8_t StrLoadBl[]  = "LOAD BAL";
+const far uint8_t StrMaster[]  = "Master";
+const far uint8_t StrSlave1[]  = "Slave 1";
+const far uint8_t StrSlave2[]  = "Slave 2";
+const far uint8_t StrSlave3[]  = "Slave 3";
+const far uint8_t StrAccess[]  = "ACCESS";
+const far uint8_t StrSwitch[]  = "Switch";
+const far uint8_t StrRcmon[]   = "RCMON";
+const far uint8_t StrEnabled[] = "Enabled";
+const far uint8_t StrExit[]    = "EXIT";
+const far uint8_t StrExitMenu[] = "MENU";
 
 
-unsigned int GLCDx, GLCDy;
+uint16_t GLCDx, GLCDy;
 
 // uses buffer
-void GLCD_print_row(const far char *data)                                       // write 10 characters to LCD
+void GLCD_print_row(const far uint8_t *data)                                       // write 10 characters to LCD
 {
-    unsigned char x = 0;
+    uint8_t x = 0;
     GLCDx = 4;
 
     GLCD_buffer_clr();                                                          // Clear buffer
@@ -337,7 +337,7 @@ void GLCD_print_arrows(void) {
 
 
 // uses buffer
-void GLCD_print_menu(const far char *data, char RowAdr)                         // write string of data to LCD, with navigation arrows
+void GLCD_print_menu(const far uint8_t *data, uint8_t RowAdr)                         // write string of data to LCD, with navigation arrows
 {
     GLCD_buffer_clr();                                                          // Clear buffer
 
@@ -356,7 +356,7 @@ void GLCD_print_menu(const far char *data, char RowAdr)                         
 
 
 // uses buffer
-void GLCD_print_Amps(unsigned int Amps)                                         // write data to LCD
+void GLCD_print_Amps(uint16_t Amps)                                         // write data to LCD
 {
     GLCD_buffer_clr();                                                          // Clear buffer
 
@@ -379,7 +379,7 @@ void GLCD_print_Amps(unsigned int Amps)                                         
 // uses buffer
 void GLCDHelp(void)                                                             // Display/Scroll helptext on LCD 
 {
-    unsigned int x;
+    uint16_t x;
 
     switch (LCDNav) {
         case MENU_CONFIG:
@@ -430,11 +430,11 @@ void GLCDHelp(void)                                                             
         default:
             break;
     }
-    if (LCDpos++ == 8) ScrollTimer = Timer - 4000;
+    if (LCDpos++ == 8) ScrollTimer = tick_ms - 4000;
     else if (LCDpos > (x - 10)) {
-        ScrollTimer = Timer - 3000;
+        ScrollTimer = tick_ms - 3000;
         LCDpos = 8;
-    } else ScrollTimer = Timer - 4700;
+    } else ScrollTimer = tick_ms - 4700;
 }
 
 
@@ -443,7 +443,7 @@ void GLCDHelp(void)                                                             
 // called once a second
 
 void GLCD(void) {
-    unsigned char x;
+    uint8_t x;
 
     if (LCDNav) {
         if (LCDTimer++ == 120) {
@@ -459,32 +459,32 @@ void GLCD(void) {
         BacklightTimer = BACKLIGHT;                                             // reset backlight timer
 
         if (Error == LESS_6A) {
-            GLCD_print2(2, (const far char *) "ERROR NO");
-            GLCD_print2(4, (const far char *) "CURRENT");
+            GLCD_print2(2, (const far uint8_t *) "ERROR NO");
+            GLCD_print2(4, (const far uint8_t *) "CURRENT");
         } else if (Error == CT_NOCOMM) {
-            GLCD_print2(0, (const far char *) "ERROR NO");
-            GLCD_print2(2, (const far char *) "SERIAL COM");
-            GLCD_print2(4, (const far char *) "CHECK");
-            GLCD_print2(6, (const far char *) "WIRING");
+            GLCD_print2(0, (const far uint8_t *) "ERROR NO");
+            GLCD_print2(2, (const far uint8_t *) "SERIAL COM");
+            GLCD_print2(4, (const far uint8_t *) "CHECK");
+            GLCD_print2(6, (const far uint8_t *) "WIRING");
         } else if (Error == TEMP_HIGH) {
-            GLCD_print2(2, (const far char *) "ERROR");
-            GLCD_print2(4, (const far char *) "HIGH TEMP");
+            GLCD_print2(2, (const far uint8_t *) "ERROR");
+            GLCD_print2(4, (const far uint8_t *) "HIGH TEMP");
         } else if (Error == RCD_TRIPPED) {
             if (LCDTimer++ < 5) {
-                GLCD_print2(0, (const far char *) "RESIDUAL");
-                GLCD_print2(2, (const far char *) "FAULT");
-                GLCD_print2(4, (const far char *) "CURRENT");
-                GLCD_print2(6, (const far char *) "DETECTED");
+                GLCD_print2(0, (const far uint8_t *) "RESIDUAL");
+                GLCD_print2(2, (const far uint8_t *) "FAULT");
+                GLCD_print2(4, (const far uint8_t *) "CURRENT");
+                GLCD_print2(6, (const far uint8_t *) "DETECTED");
             } else {
-                GLCD_print2(0, (const far char *) "PRESS");
-                GLCD_print2(2, (const far char *) "BUTTON");
-                GLCD_print2(4, (const far char *) "TO");
-                GLCD_print2(6, (const far char *) "RESET");
+                GLCD_print2(0, (const far uint8_t *) "PRESS");
+                GLCD_print2(2, (const far uint8_t *) "BUTTON");
+                GLCD_print2(4, (const far uint8_t *) "TO");
+                GLCD_print2(6, (const far uint8_t *) "RESET");
             }
         } else if (Error == Test_IO)                                            // Only used when testing the module
         {
-            GLCD_print2(2, (const far char *) "IO Test");
-            GLCD_print2(4, (const far char *) "FAILED!   ");
+            GLCD_print2(2, (const far uint8_t *) "IO Test");
+            GLCD_print2(4, (const far uint8_t *) "FAILED!   ");
             GLCDx = 12 * 8 + 4;
             GLCD_write_buf2((TestState / 10) + 0x30);
             GLCD_write_buf2((TestState % 10) + 0x30);
@@ -496,31 +496,31 @@ void GLCD(void) {
 
     if (TestState == 80)                                                        // Only used when testing the module
     {
-        GLCD_print2(2, (const far char *) "IO Test");
-        GLCD_print2(4, (const far char *) "Passed");
+        GLCD_print2(2, (const far uint8_t *) "IO Test");
+        GLCD_print2(4, (const far uint8_t *) "Passed");
         return;
     }
 
 
     if ((LCDTimer++ > 4) && Mode) {
-        GLCD_print2(2, (const far char *) "L1 L2 L3");
+        GLCD_print2(2, (const far uint8_t *) "L1 L2 L3");
 
         GLCD_buffer_clr();                                                      // Clear buffer
         for (x = 0; x < 3; x++) {
             GLCDx = 4 + 12 + x * (12 * 3);                                      // calc offset
-            GLCD_write_buf2((unsigned int) (Irms[x] / 100) + 0x30);
-            GLCD_write_buf2(((unsigned int) (Irms[x] / 10) % 10) + 0x30);
+            GLCD_write_buf2((uint16_t) (Irms[x] / 100) + 0x30);
+            GLCD_write_buf2(((uint16_t) (Irms[x] / 10) % 10) + 0x30);
         }
         GLCD_sendbuf(4);                                                        // copy buffer to LCD
     } else if ((State == STATE_A) || (State == STATE_B)) {
         glcd_clrln(0, 0x00);
         glcd_clrln(1, 0x04);                                                    // horizontal line
         if (Access_bit || Access == 0) {
-            GLCD_print2(2, (const far char *) "READY TO");
-            GLCD_print2(4, (const far char *) "CHARGE  ");
+            GLCD_print2(2, (const far uint8_t *) "READY TO");
+            GLCD_print2(4, (const far uint8_t *) "CHARGE  ");
         } else {
-            GLCD_print2(2, (const far char *) "ACCESS");
-            GLCD_print2(4, (const far char *) "DENIED");
+            GLCD_print2(2, (const far uint8_t *) "ACCESS");
+            GLCD_print2(4, (const far uint8_t *) "DENIED");
         }
         glcd_clrln(6, 0x10);                                                    // horizontal line
         glcd_clrln(7, 0x00);
@@ -536,7 +536,7 @@ void GLCD(void) {
         BACKLIGHT_ON;                                                           // LCD backlight on
         BacklightTimer = BACKLIGHT;
 
-        GLCD_print2(2, (const far char *) "CHARGING");
+        GLCD_print2(2, (const far uint8_t *) "CHARGING");
 
         GLCDx = 4 + 12;
         GLCD_buffer_clr();                                                      // Clear buffer
@@ -572,10 +572,10 @@ void GLCD(void) {
 //100 LOADBL            - Load Balancing
 //110 ACCESS            - Access control on IO2
 
-void GLCDMenu(unsigned char Buttons) {
+void GLCDMenu(uint8_t Buttons) {
     static unsigned long ButtonTimer = 0;
-    static unsigned char ButtonRelease = 0;                                     // keeps track of LCD Menu Navigation
-    static unsigned int CT1, CT1old;
+    static uint8_t ButtonRelease = 0;                                     // keeps track of LCD Menu Navigation
+    static uint16_t CT1, CT1old;
     static double Iold;
 
     // Main Menu Navigation
@@ -590,8 +590,8 @@ void GLCDMenu(unsigned char Buttons) {
     if ((LCDNav == 0) && (Buttons == 0x5) && (ButtonRelease == 0))              // Button 2 pressed ?
     {
         LCDNav = 1;                                                             // about to enter menu
-        ButtonTimer = Timer;
-    } else if (LCDNav == 1 && ((ButtonTimer + 2000) < Timer))                   // <CONFIG>
+        ButtonTimer = tick_ms;
+    } else if (LCDNav == 1 && ((ButtonTimer + 2000) < tick_ms))                   // <CONFIG>
     {
         LCDNav = MENU_CONFIG;                                                   // Main Menu entered
         ButtonRelease = 1;
@@ -814,7 +814,7 @@ void GLCDMenu(unsigned char Buttons) {
             SubMenu = 1;                                                        // Enter Submenu now
             if (LCDNav == MENU_CAL)                                             // CT1 calibration start
             {
-                CT1 = (unsigned int) Irms[0];                                   // make working copy of CT1 value
+                CT1 = (uint16_t) Irms[0];                                   // make working copy of CT1 value
                 CT1old = CT1;                                                   // and a backup
             } else if (LCDNav == MENU_EXIT)                                     // Exit Main Menu
             {
@@ -841,8 +841,8 @@ void GLCDMenu(unsigned char Buttons) {
         if (LCDNav == 1) {
             glcd_clrln(0, 0x00);
             glcd_clrln(1, 0x04);                                                // horizontal line
-            GLCD_print2(2, (const far char *) "Hold 2 sec");
-            GLCD_print2(4, (const far char *) "for Menu");
+            GLCD_print2(2, (const far uint8_t *) "Hold 2 sec");
+            GLCD_print2(4, (const far uint8_t *) "for Menu");
             glcd_clrln(6, 0x10);                                                // horizontal line
             glcd_clrln(7, 0x00);
 
@@ -891,10 +891,10 @@ void GLCDMenu(unsigned char Buttons) {
                 GLCD_write_buf2((CT1 % 10) + 0x30);
             } else {
                 GLCDx = 4 + (12 * 3);
-                GLCD_write_buf2(((unsigned int) Irms[0] / 100) + 0x30);
-                GLCD_write_buf2(((unsigned int) Irms[0] % 100 / 10) + 0x30);
+                GLCD_write_buf2(((uint16_t) Irms[0] / 100) + 0x30);
+                GLCD_write_buf2(((uint16_t) Irms[0] % 100 / 10) + 0x30);
                 GLCD_write_buf2('.');
-                GLCD_write_buf2(((unsigned int) Irms[0] % 10) + 0x30);
+                GLCD_write_buf2(((uint16_t) Irms[0] % 10) + 0x30);
             }
             GLCDx = 4 + (12 * 7);
             GLCD_write_buf2('A');
@@ -915,36 +915,36 @@ void GLCDMenu(unsigned char Buttons) {
         ButtonRelease = 2;                                                      // Set value to 2, so that LCD will be updated only once
     }
 
-    ScrollTimer = Timer;                                                        // reset timer for HelpMenu text
+    ScrollTimer = tick_ms;                                                        // reset timer for HelpMenu text
     LCDpos = 8;                                                                 // reset position of scrolling text
     OldButtonState = Buttons;
     LCDTimer = 0;
 
 }
 
-void st7565_command(unsigned char data) {
+void st7565_command(uint8_t data) {
     _A0_0;
     PIR1bits.SSP1IF = 0;                                                        // clear flag
     SSP1BUF = data;                                                             // and send SPI data
     while (!PIR1bits.SSP1IF);                                                   // wait for bit to become set
 }
 
-void st7565_data(unsigned char data) {
+void st7565_data(uint8_t data) {
     _A0_1;
     PIR1bits.SSP1IF = 0;                                                        // clear flag
     SSP1BUF = data;                                                             // and send SPI data
     while (!PIR1bits.SSP1IF);                                                   // wait for bit to become set
 }
 
-void goto_row(unsigned char y) {
-    unsigned char pattern;
+void goto_row(uint8_t y) {
+    uint8_t pattern;
     pattern = 0xB0 | (y & 0xBF);                                                //put row address on data port set command     
     st7565_command(pattern);
 }
 //--------------------
 
-void goto_col(unsigned char x) {
-    unsigned char pattern;
+void goto_col(uint8_t x) {
+    uint8_t pattern;
     pattern = ((0xF0 & x) >> 4) | 0x10;
     st7565_command(pattern);                                                    //set high byte column command
     pattern = ((0x0F & x)) | 0x00;
@@ -952,21 +952,21 @@ void goto_col(unsigned char x) {
 }
 //--------------------
 
-void goto_xy(unsigned char x, unsigned char y) {
+void goto_xy(uint8_t x, uint8_t y) {
     goto_col(x);
     goto_row(y);
 }
 
-void glcd_clrln(unsigned char ln, unsigned char data) {
-    unsigned char i;
+void glcd_clrln(uint8_t ln, uint8_t data) {
+    uint8_t i;
     goto_xy(0, ln);
     for (i = 0; i < 132; i++) {
         st7565_data(data);                                                      //put data on data port  
     }
 }
 
-void GLCD_sendbuf(unsigned char RowAdr) {
-    unsigned char i, x = 0;
+void GLCD_sendbuf(uint8_t RowAdr) {
+    uint8_t i, x = 0;
 
     goto_xy(0, RowAdr);
     for (i = 0; i < 128; i++) st7565_data(GLCDbuf[x++]);                        //put data on data port  
@@ -976,14 +976,14 @@ void GLCD_sendbuf(unsigned char RowAdr) {
 }
 
 void glcd_clear(void) {
-    unsigned char i;
+    uint8_t i;
     for (i = 0; i < 8; i++) {
         glcd_clrln(i, 0);
     }
 }
 
-void GLCD_write(unsigned int c) {
-    unsigned char i;
+void GLCD_write(uint16_t c) {
+    uint8_t i;
     goto_xy(GLCDx, GLCDy);
     for (i = 0; i < 5; i++) {
         st7565_data(font[(5 * c) + i]);
@@ -992,14 +992,14 @@ void GLCD_write(unsigned int c) {
 }
 
 void GLCD_buffer_clr(void) {
-    unsigned char x = 0;
+    uint8_t x = 0;
     do {
         GLCDbuf[x++] = 0;                                                       // clear GLCD buffer
     } while (x != 0);
 }
 
-void GLCD_write_buf2(unsigned int c) {
-    unsigned char i, ch, z1, x;
+void GLCD_write_buf2(uint16_t c) {
+    uint8_t i, ch, z1, x;
     x = GLCDx;
     for (i = 0; i < 5; i++) {
         z1 = 0;
@@ -1025,9 +1025,9 @@ void GLCD_write_buf2(unsigned int c) {
     GLCDx = GLCDx + 12;
 }
 
-/*void GLCD_write2(unsigned int c)
+/*void GLCD_write2(uint16_t c)
 {
-    unsigned char i,ch,z1;
+    uint8_t i,ch,z1;
     goto_xy(GLCDx,GLCDy);
     for(i=0;i<5;i++)
     {
@@ -1055,9 +1055,9 @@ void GLCD_write_buf2(unsigned int c) {
     GLCDx=GLCDx+12;
 }
  */
-//void GLCD_write3(unsigned int c)
+//void GLCD_write3(uint16_t c)
 //{
-//	unsigned char i,ch,z1;
+//	uint8_t i,ch,z1;
 //	goto_xy(GLCDx,GLCDy);
 //	for(i=0;i<5;i++)
 //	{
@@ -1099,9 +1099,9 @@ void GLCD_write_buf2(unsigned int c) {
 //}
 //--------------------
 
-void GLCD_print(unsigned char x, unsigned char y, const far char* str) {
-    unsigned int i = 0;
-    unsigned int ascii;
+void GLCD_print(uint8_t x, uint8_t y, const far uint8_t* str) {
+    uint16_t i = 0;
+    uint16_t ascii;
 
     GLCDx = x;
     GLCDy = y;
@@ -1113,7 +1113,7 @@ void GLCD_print(unsigned char x, unsigned char y, const far char* str) {
     }
 }
 
-void GLCD_print2(unsigned char y, const far char* data) {
+void GLCD_print2(uint8_t y, const far uint8_t* data) {
     GLCD_buffer_clr();                                                          // Clear buffer
 
     GLCDx = 64 - (strlen(data)*6);                                              // calculate offset for centering text
@@ -1160,8 +1160,8 @@ void GLCD_init(void) {
 
 void GLCD_version(void) {
     glcd_clear();
-    GLCD_print2(2, (const far char *) "Smart EVSE");
-    GLCD_print2(4, (const far char *) "Ver "VERSION);
+    GLCD_print2(2, (const far uint8_t *) "Smart EVSE");
+    GLCD_print2(4, (const far uint8_t *) "Ver "VERSION);
 
     delay(2000);                                                                // show version for 2 seconds
 }

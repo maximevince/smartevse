@@ -27,24 +27,24 @@
 #ifndef __GLCD_H
 #define __GLCD_H
 
-void GLCD_write(unsigned int c);
-void GLCD_write2(unsigned int c);
-void GLCD_write_buf2(unsigned int c);
-void GLCD_write3(unsigned int c);
-void GLCD_print(unsigned char x,unsigned char y,const far char* str);
-void GLCD_print2(unsigned char y,const far char* str);
-void GLCD_print8(const far char *data );
-void GLCD_print_menu(const far char *data,char RowAdr );
-void GLCD_print_Amps(unsigned int Amps );
-void glcd_clrln(unsigned char ln,unsigned char data);
-void GLCD_sendbuf(unsigned char RowAdr);
+void GLCD_write(uint16_t c);
+void GLCD_write2(uint16_t c);
+void GLCD_write_buf2(uint16_t c);
+void GLCD_write3(uint16_t c);
+void GLCD_print(uint8_t x, uint8_t y, const far uint8_t *str);
+void GLCD_print2(uint8_t y, const far uint8_t *str);
+void GLCD_print8(const far uint8_t *data );
+void GLCD_print_menu(const far uint8_t *data, uint8_t RowAdr );
+void GLCD_print_Amps(uint16_t Amps);
+void glcd_clrln(uint8_t ln, uint8_t data);
+void GLCD_sendbuf(uint8_t RowAdr);
 void GLCD_buffer_clr(void);
 
 
 extern void GLCDHelp(void);
 extern void GLCD(void);
-extern void GLCDMenu(unsigned char Buttons);
+extern void GLCDMenu(uint8_t Buttons);
 extern void GLCD_init(void);
 extern void GLCD_version(void);
 
-#endif // #ifndef __GLCD_H 
+#endif // #ifndef __GLCD_H

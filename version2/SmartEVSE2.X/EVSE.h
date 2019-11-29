@@ -1,38 +1,39 @@
 /*
-;    Project:       Smart EVSE
-;    Date:          21 February 2019
-;
-;
-;
-; Permission is hereby granted, free of charge, to any person obtaining a copy
-; of this software and associated documentation files (the "Software"), to deal
-; in the Software without restriction, including without limitation the rights
-; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-; copies of the Software, and to permit persons to whom the Software is
-; furnished to do so, subject to the following conditions:
-;
-; The above copyright notice and this permission notice shall be included in
-; all copies or substantial portions of the Software.
-;
-; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-; THE SOFTWARE.
- */
+   ;    Project:       Smart EVSE
+   ;    Date:          21 February 2019
+   ;
+   ;
+   ;
+   ; Permission is hereby granted, free of charge, to any person obtaining a copy
+   ; of this software and associated documentation files (the "Software"), to deal
+   ; in the Software without restriction, including without limitation the rights
+   ; to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   ; copies of the Software, and to permit persons to whom the Software is
+   ; furnished to do so, subject to the following conditions:
+   ;
+   ; The above copyright notice and this permission notice shall be included in
+   ; all copies or substantial portions of the Software.
+   ;
+   ; THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   ; IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   ; FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   ; AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   ; LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+   ; THE SOFTWARE.
+   */
 
 #ifndef __EVSE_MAIN
 #define __EVSE_MAIN
 
 #include <xc.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include "GLCD.h"
 
 
-#define VERSION "2.07"                                                          // SmartEVSE software version
+#define VERSION "2.07_V"                                                        // SmartEVSE software version
 #define DEBUG_P                                                                 // Debug print enable/disable
 
 #define ICAL 3.00                                                               // Irms Calibration value (for Current transformers) 
@@ -70,7 +71,7 @@
 #define PILOT_NOK 0
 
 #define STATE_A_TO_C PILOT_6V                                                   // Set to PILOT_6V to allow switching from STATE A to STATE C (without STATE B)
-                                                                                // default is PILOT_9V
+// default is PILOT_9V
 
 #define NO_ERROR 0
 #define LESS_6A 1
@@ -86,6 +87,9 @@
 
 #define CONTACTOR_OFF LATBbits.LATB4 = 0;                                        // Contactor OFF
 #define CONTACTOR_ON  LATBbits.LATB4 = 1;                                        // Contactor ON
+
+#define IS_CONTACTOR_OFF (PORTBbits.RB4 == 0)                                    // Contactor in OFF state?
+#define IS_CONTACTOR_ON  (PORTBbits.RB4 == 1)                                    // Contactor in ON state?S
 
 #define BACKLIGHT_OFF LATAbits.LATA3 = 0;                                        // LCD Backlight OFF
 #define BACKLIGHT_ON  LATAbits.LATA3 = 1;                                        // LCD Backlight ON
@@ -103,12 +107,28 @@
 #define MENU_ACCESS 110
 #define MENU_RCMON 120
 
+enum menu {
+    MENU_OPT_OVERVIEW = 0,
+    MENU_OPT_MAINS = 1,
+    MENU_OPT_MAX_CURRENT = 2,
+    MENU_OPT_MIN_CURRENT = 3,
+    MENU_OPT_CAL = 4,
+    MENU_OPT_MODE = 5,
+    MENU_OPT_LOCK = 6,
+    MENU_OPT_CONFIG = 7,
+    MENU_OPT_CABLE = 8,
+    MENU_OPT_LOADBL = 9,
+    MENU_OPT_ACCESS = 10,
+    MENU_OPT_RCMON = 11,
+    MENU_OPT_TEST = 12,
+};
+
 
 #ifdef DEBUG_P
 #define DEBUG_PRINT(x) printf x
 #else
 #define DEBUG_PRINT(x)
-#endif 
+#endif
 
 #define _RSTB_0 LATCbits.LATC4 = 0;
 #define _RSTB_1 LATCbits.LATC4 = 1;
@@ -116,54 +136,54 @@
 #define _A0_1 LATCbits.LATC0 = 1;
 
 
-extern char GLCDbuf[256];                                                       // GLCD buffer (one row double height text only)
+extern uint8_t GLCDbuf[256];                                                // GLCD buffer (one row double height text only)
 
 
-extern unsigned int MaxMains;                                                   // Max Mains Amps (hard limit, limited by the MAINS connection)
-extern unsigned int MaxCurrent;                                                 // Max Charge current
-extern unsigned int MinCurrent;                                                 // Minimal current the EV is happy with
-extern double ICal;                                                             // CT calibration value
-extern char Mode;                                                               // EVSE mode
-extern char Lock;                                                               // Cable lock enable/disable
-extern unsigned int CableLimit;                                                 // Fixed Cable Current limit (only used when config is set to Fixed Cable)
-extern char Config;                                                             // Configuration (Fixed Cable or Type 2 Socket)
-extern char LoadBl;                                                             // Load Balance Setting (Disable, Master or Slave)
-extern char Access;                                                             // Allow access to EVSE with button on IO2
-extern char RCmon;                                                              // Residual Current monitor
+extern uint16_t MaxMains;                                                   // Max Mains Amps (hard limit, limited by the MAINS connection)
+extern uint16_t MaxCurrent;                                                 // Max Charge current
+extern uint16_t MinCurrent;                                                 // Minimal current the EV is happy with
+extern double ICal;                                                         // CT calibration value
+extern uint8_t Mode;                                                        // EVSE mode
+extern uint8_t Lock;                                                        // Cable lock enable/disable
+extern uint16_t CableLimit;                                                 // Fixed Cable Current limit (only used when config is set to Fixed Cable)
+extern uint8_t Config;                                                      // Configuration (Fixed Cable or Type 2 Socket)
+extern uint8_t LoadBl;                                                      // Load Balance Setting (Disable, Master or Slave)
+extern uint8_t Access;                                                      // Allow access to EVSE with button on IO2
+extern uint8_t RCmon;                                                       // Residual Current monitor
 
 
-#define EEPROM_BYTES 19                                                         // total 19 bytes
+#define EEPROM_BYTES 19                                                     // total 19 bytes
 
 
-extern double Irms[3];                                                          // Momentary current per Phase (Amps *10) (23= 2.3A)
-                                                                                // Max 4 phases supported
-extern unsigned int crc16;
-extern unsigned char State;
-extern unsigned char Error;
-extern unsigned char NextState;
+/* Max 3 phases supported */
+extern double Irms[3];                                                      // Momentary current per Phase (Amps *10) (23= 2.3A)
+extern uint16_t crc16;
+extern uint8_t State;
+extern uint8_t Error;
+extern uint8_t NextState;
 
-extern unsigned int MaxCapacity;                                                // Cable limit (Amps)(limited by the wire in the charge cable, set automatically, or manually if Config=Fixed Cable)
-extern unsigned int Imeasured;                                                  // Max of all CT inputs (Amps *10)
-extern int Balanced[4];                                                         // Amps value per EVSE (max 4)
+extern uint16_t MaxCapacity;                                                // Cable limit (Amps)(limited by the wire in the charge cable, set automatically, or manually if Config=Fixed Cable)
+extern uint16_t Imeasured;                                                  // Max of all CT inputs (Amps *10)
+extern int Balanced[4];                                                     // Amps value per EVSE (max 4)
 
-extern unsigned char RX1byte;
-extern unsigned char idx, idx2, ISRFLAG, ISR2FLAG;
-extern unsigned char menu;
-extern unsigned int locktimer, unlocktimer;                                     // solenoid timers
-extern unsigned long Timer;                                                     // mS counter
-extern unsigned int ChargeTimer;                                                // seconds counter
-extern unsigned char LCDTimer;
-extern unsigned char BacklightTimer;                                            // remaining seconds the LCD backlight is active
-extern unsigned char TempEVSE;                                                  // Temperature EVSE in deg C (0-125)
-extern unsigned char ButtonState;                                               // Holds latest push Buttons state (LSB 2:0)
-extern unsigned char OldButtonState;                                            // Holds previous push Buttons state (LSB 2:0)
-extern unsigned char LCDNav;
-extern unsigned char SubMenu;
-extern unsigned long ScrollTimer;
-extern unsigned char LCDpos;
-extern unsigned char ChargeDelay;                                               // Delays charging at least 60 seconds in case of not enough current available.
-extern unsigned char TestState;
-extern unsigned char Access_bit;
+extern uint8_t RX1byte;
+extern uint8_t idx, idx2, ISRFLAG, ISR2FLAG;
+extern enum menu menu;
+extern uint16_t locktimer, unlocktimer;                                     // solenoid timers
+extern uint32_t tick_ms;                                                    // mS counter
+extern uint16_t ChargeTimer;                                                // seconds counter
+extern uint8_t LCDTimer;
+extern uint8_t BacklightTimer;                                              // remaining seconds the LCD backlight is active
+extern uint8_t TempEVSE;                                                    // Temperature EVSE in deg C (0-125)
+extern uint8_t ButtonState;                                                 // Holds latest push Buttons state (LSB 2:0)
+extern uint8_t OldButtonState;                                              // Holds previous push Buttons state (LSB 2:0)
+extern uint8_t LCDNav;
+extern uint8_t SubMenu;
+extern uint32_t ScrollTimer;
+extern uint8_t LCDpos;
+extern uint8_t ChargeDelay;                                                 // Delays charging at least 60 seconds in case of not enough current available.
+extern uint8_t TestState;
+extern uint8_t Access_bit;
 
 extern const far char MenuConfig[];
 extern const far char MenuMode[];
@@ -177,7 +197,7 @@ extern const far char MenuCal[];
 extern const far char MenuAccess[];
 extern const far char MenuRCmon[];
 
-void delay(unsigned int d);
+void delay(uint16_t d);
 void read_settings(void);
 void write_settings(void);
 
